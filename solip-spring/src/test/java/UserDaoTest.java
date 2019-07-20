@@ -16,12 +16,17 @@ public class UserDaoTest {
         ApplicationContext context = new GenericXmlApplicationContext("spring-config.xml");
 
         UserDao userDao = context.getBean("userDao", UserDao.class);
+
+        userDao.deleteAll();
+        Assert.assertThat(userDao.getCount(), CoreMatchers.is(0));
+
         User user = new User();
         user.setId("user");
         user.setName("솔잎");
         user.setPassword("thfdlv");
 
         userDao.add(user);
+        Assert.assertThat(userDao.getCount(), CoreMatchers.is(1));
 
         User user2 = userDao.get(user.getId());
 
