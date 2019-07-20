@@ -1,5 +1,6 @@
 package dao;
 
+import component.ConnectionMaker;
 import domain.User;
 
 import java.sql.*;

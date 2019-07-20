@@ -1,5 +1,5 @@
-import dao.ConnectionMaker;
-import dao.DConnectionMaker;
+import component.ConnectionMaker;
+import component.DConnectionMaker;
 import dao.UserDao;
 import domain.User;
 
