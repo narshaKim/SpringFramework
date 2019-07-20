@@ -5,33 +5,31 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.SQLException;
 
 public class UserDaoTest {
 
-    @Test
+    @Test(expected = EmptyResultDataAccessException.class)
     public void addAndGet() throws SQLException {
 
         ApplicationContext context = new GenericXmlApplicationContext("spring-config.xml");
 
         UserDao userDao = context.getBean("userDao", UserDao.class);
+        User user1 = new User("aaa", "AAA", "aPassword");
+        User user2 = new User("bbb", "BBB", "bPassword");
 
         userDao.deleteAll();
         Assert.assertThat(userDao.getCount(), CoreMatchers.is(0));
 
-        User user = new User();
-        user.setId("user");
-        user.setName("솔잎");
-        user.setPassword("thfdlv");
+        User getUser1 = userDao.get(user1.getId());
+        Assert.assertThat(getUser1.getName(), CoreMatchers.is(user1.getName()));
+        Assert.assertThat(getUser1.getPassword(), CoreMatchers.is(user1.getPassword()));
 
-        userDao.add(user);
-        Assert.assertThat(userDao.getCount(), CoreMatchers.is(1));
-
-        User user2 = userDao.get(user.getId());
-
-        Assert.assertThat(user2.getName(), CoreMatchers.is(user.getName()));
-        Assert.assertThat(user2.getPassword(), CoreMatchers.is(user.getPassword()));
+        User getUser2 = userDao.get(user2.getId());
+        Assert.assertThat(getUser2.getName(), CoreMatchers.is(user2.getName()));
+        Assert.assertThat(getUser2.getPassword(), CoreMatchers.is(user2.getPassword()));
 
     }
 
