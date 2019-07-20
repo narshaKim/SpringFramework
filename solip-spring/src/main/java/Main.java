@@ -1,3 +1,5 @@
+import dao.ConnectionMaker;
+import dao.DConnectionMaker;
 import dao.UserDao;
 import domain.User;
 
@@ -11,7 +13,8 @@ public class Main {
         user.setName("솔잎");
         user.setPassword("thfdlv");
 
-        UserDao userDao = new UserDao();
+        ConnectionMaker connectionMaker = new DConnectionMaker();
+        UserDao userDao = new UserDao(connectionMaker);
         userDao.add(user);
         System.out.println(user.getId() + " : 등록 성공");
 
