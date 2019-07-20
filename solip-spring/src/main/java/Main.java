@@ -1,5 +1,3 @@
-
-import dao.DUserDao;
 import dao.UserDao;
 import domain.User;
 
@@ -13,7 +11,7 @@ public class Main {
         user.setName("솔잎");
         user.setPassword("thfdlv");
 
-        UserDao userDao = new DUserDao();
+        UserDao userDao = new UserDao();
         userDao.add(user);
         System.out.println(user.getId() + " : 등록 성공");
 
