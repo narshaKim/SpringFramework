@@ -1,5 +1,4 @@
-import component.ConnectionMaker;
-import component.DConnectionMaker;
+import component.DaoFactory;
 import dao.UserDao;
 import domain.User;
 
@@ -13,8 +12,7 @@ public class Main {
         user.setName("솔잎");
         user.setPassword("thfdlv");
 
-        ConnectionMaker connectionMaker = new DConnectionMaker();
-        UserDao userDao = new UserDao(connectionMaker);
+        UserDao userDao = new DaoFactory().userDao();
         userDao.add(user);
         System.out.println(user.getId() + " : 등록 성공");
 
