@@ -1,7 +1,7 @@
-package main.java;
 
-import main.java.dao.UserDao;
-import main.java.domain.User;
+import dao.DUserDao;
+import dao.UserDao;
+import domain.User;
 
 import java.sql.SQLException;
 
@@ -13,7 +13,7 @@ public class Main {
         user.setName("솔잎");
         user.setPassword("thfdlv");
 
-        UserDao userDao = new UserDao();
+        UserDao userDao = new DUserDao();
         userDao.add(user);
         System.out.println(user.getId() + " : 등록 성공");
 

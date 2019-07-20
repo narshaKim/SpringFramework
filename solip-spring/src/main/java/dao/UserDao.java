@@ -1,14 +1,13 @@
-package main.java.dao;
+package dao;
 
-import main.java.domain.User;
+import domain.User;
 
 import java.sql.*;
 
-public class UserDao {
+public abstract class UserDao {
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection c = DriverManager.getConnection("jdbc:mysql://localhost/solip_spring", "root", "root");
+        Connection c = getConnection();
 
         PreparedStatement ps = c.prepareStatement("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)");
         ps.setString(1, user.getId());
@@ -20,8 +19,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection c = DriverManager.getConnection("jdbc:mysql://localhost/solip_spring", "root", "root");
+        Connection c = getConnection();
 
         PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE id=?");
         ps.setString(1, id);
@@ -40,5 +38,7 @@ public class UserDao {
 
         return user;
     }
+
+    protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
 }
