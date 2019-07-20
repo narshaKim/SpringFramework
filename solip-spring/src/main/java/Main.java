@@ -1,8 +1,7 @@
-import component.DaoFactory;
 import dao.UserDao;
 import domain.User;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.sql.SQLException;
 
@@ -14,7 +13,7 @@ public class Main {
         user.setName("솔잎");
         user.setPassword("thfdlv");
 
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        ApplicationContext context = new GenericXmlApplicationContext("spring-config.xml");
         UserDao userDao = context.getBean("userDao", UserDao.class);
         userDao.add(user);
         System.out.println(user.getId() + " : 등록 성공");
