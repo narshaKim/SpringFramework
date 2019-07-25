@@ -54,7 +54,7 @@ public class UserDao {
                 return user;
             }
         };
-        User user = (User) jdbcContextWithStatementStrategy2(strategy, resultSetStrategy);
+        User user = (User) jdbcContextWithStatementStrategy(strategy, resultSetStrategy);
         return user;
     }
 
@@ -89,7 +89,7 @@ public class UserDao {
             }
         };
 
-        int count = (Integer)jdbcContextWithStatementStrategy2(strategy, resultSetStrategy);
+        int count = (Integer) jdbcContextWithStatementStrategy(strategy, resultSetStrategy);
 
         return count;
     }
@@ -122,7 +122,7 @@ public class UserDao {
         }
     }
 
-    public Object jdbcContextWithStatementStrategy2(StatementStrategy strategy, ResultSetStrategy resultSetStrategy) throws SQLException {
+    public Object jdbcContextWithStatementStrategy(StatementStrategy strategy, ResultSetStrategy resultSetStrategy) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
