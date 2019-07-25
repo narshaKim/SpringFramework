@@ -43,10 +43,10 @@ public class UserDaoTest {
     public void addAndGet() throws SQLException {
 
         userDao.deleteAll();
-        Assert.assertThat(userDao.getCount(), CoreMatchers.is(0));
+        Assert.assertThat(userDao.getCount(), CoreMatchers.is(0L));
 
         userDao.add(user1);
-        Assert.assertThat(userDao.getCount(), CoreMatchers.is(1));
+        Assert.assertThat(userDao.getCount(), CoreMatchers.is(1L));
 
         User user2 = userDao.get(user1.getId());
 
@@ -59,7 +59,7 @@ public class UserDaoTest {
     public void getFailure() throws SQLException {
 
         userDao.deleteAll();
-        Assert.assertThat(userDao.getCount(), CoreMatchers.is(0));
+        Assert.assertThat(userDao.getCount(), CoreMatchers.is(0L));
 
         User getUser1 = userDao.get(user1.getId());
         Assert.assertThat(getUser1.getName(), CoreMatchers.is(user1.getName()));

@@ -1,13 +1,15 @@
 package component;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import strategy.ResultSetStrategy;
 import strategy.StatementStrategy;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JdbcContext {
 
@@ -45,17 +47,33 @@ public class JdbcContext {
         }
     }
 
-    public Object workWithStatementStrategy(StatementStrategy strategy, ResultSetStrategy resultSetStrategy) throws SQLException {
+    public List<Map<String, Object>> workReadWithStatementStrategy(StatementStrategy strategy) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Object result = null;
+        List<Map<String, Object>> result = null;
 
         try {
             c = dataSource.getConnection();
             ps = strategy.makePreparedStstement(c);
             rs = ps.executeQuery();
-            result = resultSetStrategy.getResult(rs);
+
+            result = new ArrayList<Map<String, Object>>();
+
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<String, Object>();
+
+                ResultSetMetaData rsmd = rs.getMetaData();
+                for(int idx=1; idx<=rsmd.getColumnCount(); idx++) {
+                    String name = rsmd.getColumnName(idx);
+                    row.put(name, rs.getObject(idx));
+                }
+
+                result.add(row);
+            }
+            if(result.size()==0)
+                throw new EmptyResultDataAccessException(1);
+
         } catch (SQLException e) {
             throw e;
         } finally {
@@ -83,7 +101,15 @@ public class JdbcContext {
     }
 
     public void executeSql(final String query, final Object... parameters) throws SQLException {
-        workWithStatementStrategy(new StatementStrategy() {
+        workWithStatementStrategy(getStrategy(query, parameters));
+    }
+
+    public List<Map<String, Object>> querySql(final String query, final Object... parameters) throws SQLException {
+        return workReadWithStatementStrategy(getStrategy(query, parameters));
+    }
+
+    private StatementStrategy getStrategy(final String query, final Object[] parameters) throws SQLException {
+        return new StatementStrategy() {
             public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
                 PreparedStatement ps = c.prepareStatement(query);
                 int idx = 0;
@@ -110,6 +136,6 @@ public class JdbcContext {
                 }
                 return ps;
             }
-        });
+        };
     }
 }
