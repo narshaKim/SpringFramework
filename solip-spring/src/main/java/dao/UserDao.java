@@ -2,6 +2,7 @@ package dao;
 
 import domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
+import strategy.AddStatement;
 import strategy.DeleteAllStatement;
 import strategy.StatementStrategy;
 
@@ -20,32 +21,8 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = c.prepareStatement("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw  e;
-        } finally {
-            if(ps!=null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(c!=null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        StatementStrategy strategy = new AddStatement(user);
+        jdbcContextWithStatementStrategy(strategy);
     }
 
     public User get(String id) throws SQLException {
