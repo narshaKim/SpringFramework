@@ -81,4 +81,35 @@ public class JdbcContext {
 
         return result;
     }
+
+    public void executeSql(final String query, final Object... parameters) throws SQLException {
+        workWithStatementStrategy(new StatementStrategy() {
+            public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement(query);
+                int idx = 0;
+                for(Object object : parameters) {
+                    String str = String.valueOf(object);
+                    if(object instanceof String) {
+                        ps.setString(++idx, str);
+                    }
+                    else if(object instanceof Integer) {
+                        ps.setInt(++idx, Integer.parseInt(str));
+                    }
+                    else if(object instanceof Long) {
+                        ps.setLong(++idx, Long.parseLong(str));
+                    }
+                    else if(object instanceof Double) {
+                        ps.setDouble(++idx, Double.parseDouble(str));
+                    }
+                    else if (object instanceof Float) {
+                        ps.setFloat(++idx, Float.parseFloat(str));
+                    }
+                    else if(object instanceof Boolean) {
+                        ps.setBoolean(++idx, Boolean.parseBoolean(str));
+                    }
+                }
+                return ps;
+            }
+        });
+    }
 }

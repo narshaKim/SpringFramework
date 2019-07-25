@@ -20,16 +20,7 @@ public class UserDao {
     }
 
     public void add(final User user) throws SQLException {
-
-        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
-                PreparedStatement ps = c.prepareStatement("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)");
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
-                return ps;
-            }
-        });
+        jdbcContext.executeSql("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)", user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(final String id) throws SQLException {
@@ -59,19 +50,14 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
-                PreparedStatement ps = c.prepareStatement("DELETE FROM TB_USER");
-                return ps;
-            }
-        });
+        jdbcContext.executeSql("DELETE FROM TB_USER");
     }
 
     public int getCount() throws SQLException {
 
         StatementStrategy strategy = new StatementStrategy() {
             public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
-                PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM TB_USER");
+                PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) AS count FROM TB_USER");
                 return ps;
             }
         };
