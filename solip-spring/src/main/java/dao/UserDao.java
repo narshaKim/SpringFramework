@@ -18,64 +18,139 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        Connection c = dataSource.getConnection();
+        Connection c = null;
+        PreparedStatement ps = null;
 
-        PreparedStatement ps = c.prepareStatement("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)");
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
-        ps.executeUpdate();
-        ps.close();
-        c.close();
+        try {
+            c = dataSource.getConnection();
+            ps = c.prepareStatement("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)");
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw  e;
+        } finally {
+            if(ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(c!=null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     public User get(String id) throws SQLException {
-        Connection c = dataSource.getConnection();
-
-        PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE id=?");
-        ps.setString(1, id);
-
-        ResultSet rs = ps.executeQuery();
-
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         User user = null;
-        if(rs.next()) {
-            String rs_id = rs.getString("id");
-            String rs_name = rs.getString("name");
-            String rs_password = rs.getString("password");
-            user = new User(rs_id, rs_name, rs_password);
-        }
-        if(user==null)
-            throw new EmptyResultDataAccessException(1);
 
-        rs.close();
-        ps.close();
-        c.close();
+        try {
+            c = dataSource.getConnection();
+            ps = c.prepareStatement("SELECT * FROM TB_USER WHERE id=?");
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                String rs_id = rs.getString("id");
+                String rs_name = rs.getString("name");
+                String rs_password = rs.getString("password");
+                user = new User(rs_id, rs_name, rs_password);
+            }
+            if(user==null)
+                throw new EmptyResultDataAccessException(1);
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if(rs!=null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(c!=null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
 
         return user;
     }
 
     public void deleteAll() throws SQLException {
-        Connection c = dataSource.getConnection();
+        Connection c = null;
+        PreparedStatement ps = null;
 
-        PreparedStatement ps = c.prepareStatement("DELETE FROM TB_USER");
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+        try {
+            c = dataSource.getConnection();
+            ps = c.prepareStatement("DELETE FROM TB_USER");
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if(ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(c!=null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     public int getCount() throws SQLException {
-        Connection c = dataSource.getConnection();
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = -1;
 
-        PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM TB_USER");
-
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        int count = rs.getInt(1);
-
-        rs.close();
-        ps.close();
-        c.close();
+        try {
+            c = dataSource.getConnection();
+            ps = c.prepareStatement("SELECT COUNT(*) FROM TB_USER");
+            rs = ps.executeQuery();
+            rs.next();
+            count = rs.getInt(1);
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if(rs!=null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(c!=null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
 
         return count;
     }
