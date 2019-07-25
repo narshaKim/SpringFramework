@@ -1,11 +1,11 @@
 package dao;
 
+import component.JdbcContext;
 import domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import strategy.ResultSetStrategy;
 import strategy.StatementStrategy;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,15 +13,15 @@ import java.sql.SQLException;
 
 public class UserDao {
 
-    private DataSource dataSource;
+    JdbcContext jdbcContext;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {
 
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
             public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
                 PreparedStatement ps = c.prepareStatement("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)");
                 ps.setString(1, user.getId());
@@ -54,12 +54,12 @@ public class UserDao {
                 return user;
             }
         };
-        User user = (User) jdbcContextWithStatementStrategy(strategy, resultSetStrategy);
+        User user = (User) jdbcContext.workWithStatementStrategy(strategy, resultSetStrategy);
         return user;
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
             public PreparedStatement makePreparedStstement(Connection c) throws SQLException {
                 PreparedStatement ps = c.prepareStatement("DELETE FROM TB_USER");
                 return ps;
@@ -89,74 +89,9 @@ public class UserDao {
             }
         };
 
-        int count = (Integer) jdbcContextWithStatementStrategy(strategy, resultSetStrategy);
+        int count = (Integer) jdbcContext.workWithStatementStrategy(strategy, resultSetStrategy);
 
         return count;
-    }
-
-    public void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-
-            ps = strategy.makePreparedStstement(c);
-
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if(ps!=null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(c!=null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    public Object jdbcContextWithStatementStrategy(StatementStrategy strategy, ResultSetStrategy resultSetStrategy) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Object result = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = strategy.makePreparedStstement(c);
-            rs = ps.executeQuery();
-            result = resultSetStrategy.getResult(rs);
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if(rs!=null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(ps!=null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(c!=null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-
-        return result;
     }
 
 }
