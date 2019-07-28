@@ -28,4 +28,10 @@ public class CalcSumTest {
         Assert.assertThat(multiply, CoreMatchers.is(24));
     }
 
+    @Test
+    public void concatenateOfNumbers() throws IOException {
+        String concat = calculator.concatenate(numFilepath);
+        Assert.assertThat(concat, CoreMatchers.is("1234"));
+    }
+
 }

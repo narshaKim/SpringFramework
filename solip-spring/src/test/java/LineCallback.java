@@ -1,7 +1,7 @@
 import java.io.IOException;
 
-public interface LineCallback {
+public interface LineCallback<T> {
 
-    Integer doSomethingWithLine(String line, int value) throws IOException;
+    T doSomethingWithLine(String line, T value) throws IOException;
 
 }
