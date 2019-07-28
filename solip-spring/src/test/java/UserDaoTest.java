@@ -41,7 +41,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void addAndGet() throws SQLException {
+    public void addAndGet() {
 
         userDao.deleteAll();
         Assert.assertThat(userDao.getCount(), CoreMatchers.is(0L));
@@ -57,7 +57,7 @@ public class UserDaoTest {
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
-    public void getFailure() throws SQLException {
+    public void getFailure() {
 
         userDao.deleteAll();
         Assert.assertThat(userDao.getCount(), CoreMatchers.is(0L));
@@ -73,7 +73,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void getAll() throws SQLException {
+    public void getAll() {
 
         userDao.deleteAll();
 
