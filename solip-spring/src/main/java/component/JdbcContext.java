@@ -1,7 +1,6 @@
 package component;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import strategy.ResultSetStrategy;
 import strategy.StatementStrategy;
 
 import javax.sql.DataSource;

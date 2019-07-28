@@ -1,39 +1,58 @@
 package dao;
 
-import component.JdbcContext;
 import domain.User;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
 public class UserDao {
 
-    JdbcContext jdbcContext;
+    JdbcTemplate jdbcTemplate;
+    DataSource dataSource;
 
-    public void setJdbcContext(JdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContext.executeSql("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)", user.getId(), user.getName(), user.getPassword());
+        jdbcTemplate.update("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)", user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(final String id) throws SQLException {
-        List<Map<String, Object>> result = jdbcContext.querySql("SELECT * FROM TB_USER WHERE id=?", id);
-        Map<String, Object> item = result.get(0);
-        User user = new User(item.get("ID").toString(), item.get("NAME").toString(), item.get("PASSWORD").toString());
-        return user;
+        return jdbcTemplate.queryForObject("SELECT * FROM TB_USER WHERE id = ?", new Object[]{id}, new RowMapper<User>() {
+            public User mapRow(ResultSet resultSet, int i) throws SQLException {
+                User user  = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
+                return user;
+            }
+        });
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.executeSql("DELETE FROM TB_USER");
+        jdbcTemplate.update("DELETE FROM TB_USER");
     }
 
     public long getCount() throws SQLException {
-        List<Map<String, Object>> result = jdbcContext.querySql("SELECT COUNT(*) AS COUNT FROM TB_USER");
-        long count = (Long)result.get(0).get("COUNT");
-        return count;
+        //queryForInt가 없음
+        Integer result = jdbcTemplate.query(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement("SELECT COUNT(*) AS COUNT FROM TB_USER");
+            }
+        }, new ResultSetExtractor<Integer>() {
+            public Integer extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                resultSet.next();
+                return resultSet.getInt(1);
+            }
+        });
+        return result;
     }
 
 }
