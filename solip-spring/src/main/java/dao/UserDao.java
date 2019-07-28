@@ -18,6 +18,13 @@ public class UserDao {
 
     JdbcTemplate jdbcTemplate;
 
+    private RowMapper<User> userMapper = new RowMapper<User>() {
+        public User mapRow(ResultSet resultSet, int i) throws SQLException {
+            User user = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
+            return user;
+        }
+    };
+
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -27,20 +34,11 @@ public class UserDao {
     }
 
     public User get(final String id) throws SQLException {
-        return jdbcTemplate.queryForObject("SELECT * FROM TB_USER WHERE id = ?", new Object[]{id}, new RowMapper<User>() {
-            public User mapRow(ResultSet resultSet, int i) throws SQLException {
-                User user  = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
-                return user;
-            }
-        });
+        return jdbcTemplate.queryForObject("SELECT * FROM TB_USER WHERE id = ?", new Object[]{id}, this.userMapper);
     }
 
     public List<User> getAll() throws SQLException {
-        List<User> users = jdbcTemplate.query("SELECT * FROM TB_USER", new RowMapper<User>() {
-            public User mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
-            }
-        });
+        List<User> users = jdbcTemplate.query("SELECT * FROM TB_USER", this.userMapper);
         return users;
     }
 
