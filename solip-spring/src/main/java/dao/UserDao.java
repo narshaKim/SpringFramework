@@ -47,17 +47,7 @@ public class UserDao {
     }
 
     public long getCount() throws SQLException {
-        //queryForInt가 없음
-        Integer result = jdbcTemplate.query(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                return connection.prepareStatement("SELECT COUNT(*) AS COUNT FROM TB_USER");
-            }
-        }, new ResultSetExtractor<Integer>() {
-            public Integer extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-                resultSet.next();
-                return resultSet.getInt(1);
-            }
-        });
+        Integer result = jdbcTemplate.queryForObject("SELECT COUNT(*) AS COUNT FROM TB_USER", Integer.class);
         return result;
     }
 
