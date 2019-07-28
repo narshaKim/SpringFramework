@@ -118,6 +118,28 @@ public class UserDaoTest {
         userDao.add(user1);
     }
 
+    @Test
+    public void update() {
+        userDao.deleteAll();
+
+        userDao.add(user1);
+        userDao.add(user2);
+
+        user1.setName("수정된이름");
+        user1.setPassword("modified");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(999);
+        userDao.update(user1);
+
+        User user1Update = userDao.get(user1.getId());
+        checkSameUser(user1, user1Update);
+
+        User user2same = userDao.get(user2.getId());
+        checkSameUser(user2, user2same);
+
+    }
+
     private void checkSameUser(User user1, User user2) {
         Assert.assertThat(user1.getId(), CoreMatchers.is(user2.getId()));
         Assert.assertThat(user1.getName(), CoreMatchers.is(user2.getName()));

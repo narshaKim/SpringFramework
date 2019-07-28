@@ -61,4 +61,14 @@ public class UserDaoJdbc implements UserDao {
         return result;
     }
 
+    public void update(User user) {
+        jdbcTemplate.update("UPDATE TB_USER SET NAME=?, PASSWORD=?, LEVEL=?, LOGIN=?, RECOMMEND=? WHERE ID=?"
+                , user.getName()
+                , user.getPassword()
+                , user.getLevel().intValue()
+                , user.getLogin()
+                , user.getRecommend()
+                , user.getId()
+        );
+    }
 }

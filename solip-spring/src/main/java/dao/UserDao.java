@@ -15,4 +15,6 @@ public interface UserDao {
     public void deleteAll();
 
     public long getCount();
+
+    public void update(User user);
 }
