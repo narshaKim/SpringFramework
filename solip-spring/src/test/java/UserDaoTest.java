@@ -1,4 +1,5 @@
 import dao.UserDao;
+import domain.Level;
 import domain.User;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -34,9 +35,9 @@ public class UserDaoTest {
         System.out.println(this);
         System.out.println(this.context);
 
-        user1 = new User("aaa", "AAA", "aPassword");
-        user2 = new User("bbb", "BBB", "bPassword");
-        user3 = new User("ccc", "CCC", "cPassword");
+        user1 = new User("aaa", "AAA", "aPassword", Level.BASIC, 1, 0);
+        user2 = new User("bbb", "BBB", "bPassword", Level.SILVER, 55, 10);
+        user3 = new User("ccc", "CCC", "cPassword", Level.GOLD, 100, 40);
 
     }
 
@@ -53,6 +54,9 @@ public class UserDaoTest {
 
         Assert.assertThat(user2.getName(), CoreMatchers.is(user1.getName()));
         Assert.assertThat(user2.getPassword(), CoreMatchers.is(user1.getPassword()));
+        Assert.assertThat(user2.getLevel(), CoreMatchers.is(user1.getLevel()));
+        Assert.assertThat(user2.getLogin(), CoreMatchers.is(user1.getLogin()));
+        Assert.assertThat(user2.getRecommend(), CoreMatchers.is(user1.getRecommend()));
 
     }
 
@@ -65,10 +69,16 @@ public class UserDaoTest {
         User getUser1 = userDao.get(user1.getId());
         Assert.assertThat(getUser1.getName(), CoreMatchers.is(user1.getName()));
         Assert.assertThat(getUser1.getPassword(), CoreMatchers.is(user1.getPassword()));
+        Assert.assertThat(getUser1.getLevel(), CoreMatchers.is(user1.getLevel()));
+        Assert.assertThat(getUser1.getLogin(), CoreMatchers.is(user1.getLogin()));
+        Assert.assertThat(getUser1.getRecommend(), CoreMatchers.is(user1.getRecommend()));
 
         User getUser2 = userDao.get(user2.getId());
         Assert.assertThat(getUser2.getName(), CoreMatchers.is(user2.getName()));
         Assert.assertThat(getUser2.getPassword(), CoreMatchers.is(user2.getPassword()));
+        Assert.assertThat(getUser2.getLevel(), CoreMatchers.is(user2.getLevel()));
+        Assert.assertThat(getUser2.getLogin(), CoreMatchers.is(user2.getLogin()));
+        Assert.assertThat(getUser2.getRecommend(), CoreMatchers.is(user2.getRecommend()));
 
     }
 
@@ -83,20 +93,20 @@ public class UserDaoTest {
         userDao.add(user1);
         List<User> users1 = (List<User>) userDao.getAll();
         Assert.assertThat(users1.size(), CoreMatchers.is(1));
-        checkSmaeUser(user1, users1.get(0));
+        checkSameUser(user1, users1.get(0));
 
         userDao.add(user2);
         List<User> users2 = (List<User>) userDao.getAll();
         Assert.assertThat(users2.size(), CoreMatchers.is(2));
-        checkSmaeUser(user1, users2.get(0));
-        checkSmaeUser(user2, users2.get(1));
+        checkSameUser(user1, users2.get(0));
+        checkSameUser(user2, users2.get(1));
 
         userDao.add(user3);
         List<User> users3 = (List<User>) userDao.getAll();
         Assert.assertThat(users3.size(), CoreMatchers.is(3));
-        checkSmaeUser(user1, users3.get(0));
-        checkSmaeUser(user2, users3.get(1));
-        checkSmaeUser(user3, users3.get(2));
+        checkSameUser(user1, users3.get(0));
+        checkSameUser(user2, users3.get(1));
+        checkSameUser(user3, users3.get(2));
 
     }
 
@@ -108,10 +118,13 @@ public class UserDaoTest {
         userDao.add(user1);
     }
 
-    private void checkSmaeUser(User user1, User user2) {
+    private void checkSameUser(User user1, User user2) {
         Assert.assertThat(user1.getId(), CoreMatchers.is(user2.getId()));
         Assert.assertThat(user1.getName(), CoreMatchers.is(user2.getName()));
         Assert.assertThat(user1.getPassword(), CoreMatchers.is(user2.getPassword()));
+        Assert.assertThat(user1.getLevel(), CoreMatchers.is(user2.getLevel()));
+        Assert.assertThat(user1.getLogin(), CoreMatchers.is(user2.getLogin()));
+        Assert.assertThat(user1.getRecommend(), CoreMatchers.is(user2.getRecommend()));
     }
 
 }

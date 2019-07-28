@@ -1,5 +1,6 @@
 package dao;
 
+import domain.Level;
 import domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +16,14 @@ public class UserDaoJdbc implements UserDao {
 
     private RowMapper<User> userMapper = new RowMapper<User>() {
         public User mapRow(ResultSet resultSet, int i) throws SQLException {
-            User user = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
+            User user = new User(
+                    resultSet.getString("id")
+                    , resultSet.getString("name")
+                    , resultSet.getString("password")
+                    , Level.valueOf(resultSet.getInt("level"))
+                    , resultSet.getInt("login")
+                    , resultSet.getInt("recommend")
+            );
             return user;
         }
     };
@@ -25,7 +33,14 @@ public class UserDaoJdbc implements UserDao {
     }
 
     public void add(final User user) {
-        jdbcTemplate.update("INSERT INTO TB_USER(ID, NAME, PASSWORD) VALUES(?,?,?)", user.getId(), user.getName(), user.getPassword());
+        jdbcTemplate.update("INSERT INTO TB_USER(ID, NAME, PASSWORD, LEVEL, LOGIN, RECOMMEND) VALUES(?,?,?,?,?,?)"
+                , user.getId()
+                , user.getName()
+                , user.getPassword()
+                , user.getLevel().intValue()
+                , user.getLogin()
+                , user.getRecommend()
+        );
     }
 
     public User get(final String id) {
