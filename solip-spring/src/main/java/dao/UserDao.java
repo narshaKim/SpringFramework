@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class UserDao {
 
@@ -34,6 +35,15 @@ public class UserDao {
                 return user;
             }
         });
+    }
+
+    public List<User> getAll() throws SQLException {
+        List<User> users = jdbcTemplate.query("SELECT * FROM TB_USER", new RowMapper<User>() {
+            public User mapRow(ResultSet resultSet, int i) throws SQLException {
+                return new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
+            }
+        });
+        return users;
     }
 
     public void deleteAll() throws SQLException {

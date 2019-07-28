@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring-config.xml")
@@ -69,6 +70,40 @@ public class UserDaoTest {
         Assert.assertThat(getUser2.getName(), CoreMatchers.is(user2.getName()));
         Assert.assertThat(getUser2.getPassword(), CoreMatchers.is(user2.getPassword()));
 
+    }
+
+    @Test
+    public void getAll() throws SQLException {
+
+        userDao.deleteAll();
+
+        List<User> users0 = (List<User>) userDao.getAll();
+        Assert.assertThat(users0.size(), CoreMatchers.is(0));
+
+        userDao.add(user1);
+        List<User> users1 = (List<User>) userDao.getAll();
+        Assert.assertThat(users1.size(), CoreMatchers.is(1));
+        checkSmaeUser(user1, users1.get(0));
+
+        userDao.add(user2);
+        List<User> users2 = (List<User>) userDao.getAll();
+        Assert.assertThat(users2.size(), CoreMatchers.is(2));
+        checkSmaeUser(user1, users2.get(0));
+        checkSmaeUser(user2, users2.get(1));
+
+        userDao.add(user3);
+        List<User> users3 = (List<User>) userDao.getAll();
+        Assert.assertThat(users3.size(), CoreMatchers.is(3));
+        checkSmaeUser(user1, users3.get(0));
+        checkSmaeUser(user2, users3.get(1));
+        checkSmaeUser(user3, users3.get(2));
+
+    }
+
+    private void checkSmaeUser(User user1, User user2) {
+        Assert.assertThat(user1.getId(), CoreMatchers.is(user2.getId()));
+        Assert.assertThat(user1.getName(), CoreMatchers.is(user2.getName()));
+        Assert.assertThat(user1.getPassword(), CoreMatchers.is(user2.getPassword()));
     }
 
 }
