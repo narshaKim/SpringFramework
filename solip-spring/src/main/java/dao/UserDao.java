@@ -17,10 +17,8 @@ import java.util.List;
 public class UserDao {
 
     JdbcTemplate jdbcTemplate;
-    DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
