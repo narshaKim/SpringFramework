@@ -9,8 +9,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import service.TestUserService;
 import service.UserService;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class UserServiceTest {
     private UserDao userDao;
 
     List<User> users;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Test
     public void bean() {
@@ -51,7 +56,11 @@ public class UserServiceTest {
             userDao.add(user);
         }
 
-        userService.upgradeLevels();
+        try {
+            userService.upgradeLevels();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         checkLevel(users.get(0), false);
         checkLevel(users.get(1), true);
@@ -77,6 +86,29 @@ public class UserServiceTest {
 
         Assert.assertThat(userWithLevelRead.getLevel(), CoreMatchers.is(userWithLevel.getLevel()));
         Assert.assertThat(userWithoutLevelRead.getLevel(), CoreMatchers.is(Level.BASIC));
+
+    }
+
+    @Test
+    public void upgradeAllNothing() {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+        testUserService.setDataSource(dataSource);
+
+        userDao.deleteAll();
+
+        for(User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            testUserService.upgradeLevels();
+            Assert.fail("TestUserServiceException expected");
+        } catch (Exception e) {
+        }
+
+        checkLevel(users.get(1), false);
+
 
     }
 
