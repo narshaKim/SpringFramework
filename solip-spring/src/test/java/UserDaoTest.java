@@ -35,9 +35,9 @@ public class UserDaoTest {
         System.out.println(this);
         System.out.println(this.context);
 
-        user1 = new User("aaa", "AAA", "aPassword", Level.BASIC, 1, 0);
-        user2 = new User("bbb", "BBB", "bPassword", Level.SILVER, 55, 10);
-        user3 = new User("ccc", "CCC", "cPassword", Level.GOLD, 100, 40);
+        user1 = new User("aaa", "AAA", "aPassword", Level.BASIC, 1, 0, "aaa@spring.com");
+        user2 = new User("bbb", "BBB", "bPassword", Level.SILVER, 55, 10, "bbb@spring.com");
+        user3 = new User("ccc", "CCC", "cPassword", Level.GOLD, 100, 40, "ccc@spring.com");
 
     }
 

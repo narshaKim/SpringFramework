@@ -3,6 +3,8 @@ package service;
 import dao.UserDao;
 import domain.Level;
 import domain.User;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -14,9 +16,15 @@ public class UserService {
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
 
+    private MailSender mailSender;
+
     UserDao userDao;
 
     PlatformTransactionManager transactionManager;
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -45,6 +53,16 @@ public class UserService {
     public void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeEmail(user);
+    }
+
+    private void sendUpgradeEmail(User user) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("from@from.com");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText("사용자님의 등급이 " + user.getLevel().name());
+        mailSender.send(mailMessage);
     }
 
     private boolean canUpgradeLevel(User user) {
